@@ -1,68 +1,426 @@
-Topic: NodeTS <br />
-Submission Date: 30 October 2026 <br />
-Time: 09:00 AM
+# Shopping List API
 
+A REST API built with **Node.js, Express, and TypeScript** for managing shopping list items. It allows users to create, view, update, and delete shopping items through HTTP requests.
 
-Please submit by pushing to your GitHub repository and creating a pull request to your mentor
+## Table of Contents
 
-# Title: Task 6 - Shopping List API
+1. Project Overview
+2. Technologies Used
+3. Features
+4. Project Structure
+5. Requirements
+6. How to Clone and Run the Project
+7. Available Commands
+8. API Endpoints
+9. Request and Response Examples
+10. Validation and Error Handling
+11. Testing with Postman
+12. Current Limitations
 
-## Project Overview
-You are tasked to build a shopping list REST API that lets users manage the items they want to buy. The app allows users to add, view, update, and delete items from the shopping list.
+## 1. Project Overview
 
-## Use-case Scenario
+The Shopping List API demonstrates how a backend application receives HTTP requests, processes data, validates input, and returns JSON responses.
 
- - Suppose you need to make a note of groceries before going to the store.
- - You make a shopping list consisting of items such as "Milk, Eggs, Bread.".
- - As you shop, you can check off items that you've purchased.
- - You can modify amounts (e.g., 2L of milk rather than 1).
- - You can remove items you do not need anymore.
+Each shopping item contains:
+- `id`: A unique numeric identifier.
+- `name`: The name of the shopping item.
+- `quantity`: The number of items required.
+- `purchased`: A Boolean value indicating whether the item has been purchased.
 
-The application should run as a NodeJS HTTP server with Typescript. Users must be able to interact with the application using API requests, e.g Postman.
+The current version stores items in an in-memory array.
 
-## Core Features
- - Add an item
-   - Endpoint: POST /items
- - Get All items
-   - Endpoint: GET /items
- - Get a Single item by ID
-   - Endpoint: GET /items/:id
- - Update an item (name, quantity, purchased status, etc…)
-   - Endpoint: PUT /items/:id
- - Delete an item
-   - Endpoint: DELETE /items/:id
+## 2. Technologies Used
 
-## Task Breakdown
+- **Node.js:** Runs JavaScript and TypeScript applications outside the browser.
+- **Express.js:** Handles HTTP requests and defines API endpoints.
+- **TypeScript:** Adds static types to JavaScript and helps identify errors during development.
+- **npm:** Installs project dependencies and runs scripts.
+- **Postman:** Tests API endpoints and responses.
+- **Git and GitHub:** Track changes and host the project repository.
 
-### Sprint 1: Project Setup
-   - Setup Node.js + TypeScript project (tsconfig.json, package.json)
-   - Create a basic HTTP server (server.ts)
+## 3. Features
 
-### Sprint 2: Shopping List Items CRUD
-   - Create Item type in models/item.ts.
-   - Store items in memory (array of objects).
-   - Implement GET /items → return all items.
-   - Implement POST /items → create a new item.
-   - Return validation errors if fields are missing.
+- Retrieve the API health-check message.
+- Retrieve all shopping items.
+- Create a shopping item.
+- Retrieve a single item by ID.
+- Update an existing item by ID.
+- Delete an item by ID.
+- Validate input and return appropriate HTTP status codes.
+- Return JSON responses for successful operations and errors.
 
-### Sprint 3: Item Details & Updates
-   - Implement GET /items/:id → return item by ID.
-   - Implement PUT /items/:id → update name, quantity, or purchased status.
-   - Return 404 if item not found.
-   - Add validation.
+## 4. Project Structure
 
-### Sprint 4: Delete Items
-   - Implement DELETE /items/:id.
-   - Return 204 No Content if deleted, 404 if not found.
+```text
+shopping-list-api/
+├── src/
+│   ├── models/
+│   │   └── item.ts
+│   └── server.ts
+├── .gitignore
+├── package.json
+├── package-lock.json
+├── tsconfig.json
+├── README.md
+├── node_modules/    (created after npm install)
+└── dist/            (created after npm run build)
+```
 
-### Sprint 5: Error Handling & Response Consistency
-   - Create a reusable error handler (400 for bad input, 404 for not found).
-   - Ensure all responses are JSON with a consistent shape.
+### Main files
 
-### Sprint 6: Testing & Documentation
-   - Test endpoints with Postman.
-   - Document API endpoints in a README.md.
+- `src/server.ts`: Defines the Express server, routes, validation, and request handling.
+- `src/models/item.ts`: Defines the TypeScript interface for a shopping item.
+- `package.json`: Contains project metadata, dependencies, and npm scripts.
+- `package-lock.json`: Records the dependency versions used by npm.
+- `tsconfig.json`: Configures the TypeScript compiler.
+- `.gitignore`: Excludes files such as `node_modules`, `dist`, and `.env` from Git.
+- `README.md`: Documents the project and explains how to use it.
+- `dist/`: Contains compiled JavaScript generated by the TypeScript build.
 
-### Deliverables
-   1. Readme file
-   2. Project
+## 5. Requirements
+
+Before running the project, install:
+
+- [Node.js](https://nodejs.org/) — use a supported LTS version.
+- npm, which is included with Node.js.
+- [Git](https://git-scm.com/downloads).
+- [Postman](https://www.postman.com/downloads/) (optional, for API testing).
+- A code editor such as Visual Studio Code (optional).
+
+Check your installation using:
+
+```bash
+node --version
+npm --version
+git --version
+```
+
+## 6. How to Clone and Run the Project
+
+These instructions are for someone downloading the project for the first time.
+
+### Step 1: Open a terminal
+
+Open PowerShell, Command Prompt, or a terminal in Visual Studio Code.
+
+### Step 2: Clone the repository
+
+Run:
+
+```bash
+git clone -b shopping-list-api https://github.com/davidmakomane/node-shopping-list-api.git
+```
+
+This downloads the `shopping-list-api` branch of the repository to your computer.
+
+### Step 3: Enter the project folder
+
+```bash
+cd node-shopping-list-api
+```
+
+### Step 4: Install dependencies
+
+```bash
+npm install
+```
+
+This installs the packages listed in `package.json` and uses `package-lock.json` to resolve the dependency versions.
+
+You do not need to install Express or TypeScript globally.
+
+### Step 5: Start the development server
+
+```bash
+npm run dev
+```
+
+The server should display:
+
+```text
+Server running at http://localhost:3000
+```
+
+Keep this terminal open while testing the API.
+
+### Step 6: Check that the API is running
+
+Open a browser or send a GET request in Postman to:
+
+```text
+http://localhost:3000/
+```
+
+A successful response should look like:
+
+```json
+{
+  "success": true,
+  "message": "Shopping List API is running!"
+}
+```
+
+The API is now ready to use.
+
+### Running the project in production mode
+
+To compile the TypeScript files:
+
+```bash
+npm run build
+```
+
+Then start the compiled application:
+
+```bash
+npm start
+```
+
+The build creates the `dist` directory, and the start command runs `dist/server.js`.
+
+## 7. Available Commands
+
+| Command | Purpose |
+|---|---|
+| `npm install` | Install project dependencies. |
+| `npm run dev` | Run the development server using `tsx watch`. |
+| `npm run build` | Compile TypeScript into JavaScript. |
+| `npm start` | Run the compiled application from `dist/server.js`. |
+
+## 8. API Endpoints
+
+The default base URL is:
+
+```text
+http://localhost:3000
+```
+
+| Method | Endpoint | Description | Expected success status |
+|---|---|---|---|
+| GET | `/` | Check whether the API is running. | 200 OK |
+| GET | `/items` | Retrieve all shopping items. | 200 OK |
+| POST | `/items` | Create a shopping item. | 201 Created |
+| GET | `/items/:id` | Retrieve one item by ID. | 200 OK |
+| PUT | `/items/:id` | Update an existing item. | 200 OK |
+| DELETE | `/items/:id` | Delete an existing item. | 204 No Content |
+
+Replace `:id` with the numeric ID of the item you want to retrieve, update, or delete.
+
+## 9. Request and Response Examples
+
+### A. Retrieve all items
+
+**Request**
+
+```http
+GET http://localhost:3000/items
+```
+
+**Example response**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Milk",
+      "quantity": 2,
+      "purchased": false
+    }
+  ]
+}
+```
+
+The `data` array may be empty if no items have been created during the current server session.
+
+### B. Create an item
+
+**Request**
+
+```http
+POST http://localhost:3000/items
+Content-Type: application/json
+```
+
+**Request body**
+
+```json
+{
+  "name": "Bread",
+  "quantity": 2,
+  "purchased": false
+}
+```
+
+**Example response — 201 Created**
+
+```json
+{
+  "success": true,
+  "message": "Shopping item created successfully.",
+  "data": {
+    "id": 1,
+    "name": "Bread",
+    "quantity": 2,
+    "purchased": false
+  }
+}
+```
+
+The ID is assigned by the application. Its actual value depends on the current server session.
+
+### C. Retrieve one item
+
+**Request**
+
+```http
+GET http://localhost:3000/items/1
+```
+
+Returns the item with ID `1` if it exists.
+
+### D. Update an item
+
+**Request**
+
+```http
+PUT http://localhost:3000/items/1
+Content-Type: application/json
+```
+
+**Request body**
+
+```json
+{
+  "name": "Brown Bread",
+  "quantity": 3,
+  "purchased": true
+}
+```
+
+All three fields are required for this update operation.
+
+**Example response — 200 OK**
+
+```json
+{
+  "success": true,
+  "message": "Shopping item updated successfully.",
+  "data": {
+    "id": 1,
+    "name": "Brown Bread",
+    "quantity": 3,
+    "purchased": true
+  }
+}
+```
+
+### E. Delete an item
+
+**Request**
+
+```http
+DELETE http://localhost:3000/items/1
+```
+
+If the item exists, the API returns:
+
+```text
+204 No Content
+```
+
+A `204` response has no response body.
+
+## 10. Validation and Error Handling
+
+The API validates incoming data before creating or updating shopping items.
+
+- **Name:** Must be a non-empty string. Leading and trailing spaces are removed.
+- **Quantity:** Must be a positive integer.
+- **Purchased:** Must be a Boolean value (`true` or `false`). When omitted during creation, it defaults to `false`.
+- **ID:** Must be a positive integer.
+
+### Common status codes
+
+| Status | Meaning | Example |
+|---|---|---|
+| 200 | OK | Item retrieved or updated successfully. |
+| 201 | Created | Item created successfully. |
+| 204 | No Content | Item deleted successfully. |
+| 400 | Bad Request | Invalid ID or invalid request data. |
+| 404 | Not Found | Requested item does not exist. |
+
+**Example validation error**
+
+A request with a negative quantity:
+
+```json
+{
+  "name": "Milk",
+  "quantity": -2,
+  "purchased": false
+}
+```
+
+Returns `400 Bad Request` with an error message explaining that the quantity must be a positive integer.
+
+**Example missing-item error**
+
+Request:
+
+```http
+GET http://localhost:3000/items/999
+```
+
+If no item has that ID, the API returns `404 Not Found` with a message indicating that the shopping item could not be found.
+
+## 11. Testing with Postman
+
+1. Start the API using `npm run dev`.
+2. Open Postman and create a new request.
+3. Enter the required HTTP method and URL.
+4. For POST and PUT requests, open **Body → raw → JSON** and enter the request body.
+5. Click **Send**.
+6. Check the status code and JSON response.
+
+### Suggested testing checklist
+
+- [ ] GET `/` returns `200`.
+- [ ] GET `/items` returns `200`.
+- [ ] POST `/items` creates an item and returns `201`.
+- [ ] GET `/items/1` retrieves the created item.
+- [ ] PUT `/items/1` updates the item and returns `200`.
+- [ ] DELETE `/items/1` deletes the item and returns `204`.
+- [ ] GET `/items/999` returns `404` when the item does not exist.
+- [ ] Invalid IDs return `400`.
+- [ ] Empty names and invalid quantities return `400`.
+- [ ] Invalid `purchased` values return `400`.
+- [ ] Repeating a deletion returns `404` after the item has already been deleted.
+
+Use an item ID that actually exists in your current session when testing retrieval, updating, and deletion.
+
+## 12. Current Limitations
+
+### In-memory storage
+
+The API currently stores shopping items in an in-memory array rather than a database.
+
+This means:
+
+- Items are available while the server process is running.
+- Restarting the server clears all shopping items.
+- Data is not shared between separate server instances.
+- The API does not provide permanent storage.
+
+A future improvement would be to connect the API to a database, such as PostgreSQL or MongoDB, to persist shopping items between server restarts.
+
+## Author
+
+**Letsego David Makomane**
+
+GitHub repository: https://github.com/davidmakomane/node-shopping-list-api
+
+---
+
+This project was developed as a learning exercise to practise REST API development, TypeScript, Express, input validation, error handling, API testing, and Git/GitHub workflows.
